@@ -1,0 +1,25 @@
+###
+GET https://auth.knight.works/verify
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGVtYWlsLmNvbSIsImlhdCI6MTU3MTc1MjQwNiwiZXhwIjoxNTcxNzUzMDA2fQ.16AN6x_LfeqjQmhkgT27rKNNjDVZi-6B19RiyYfeUwQ
+###
+
+
+http://localhost:3131/register
+
+####
+POST http://localhost:3131/api/v1/login
+content-type: application/json
+
+{
+    "email": "test@email.com",
+    "password": "test"
+}
+
+###
+POST https://auth.knight.works/login
+content-type: application/json
+
+{
+    "email": "test@email.com",
+    "password": "test"
+}
