@@ -16,7 +16,7 @@ content-type: application/json
 }
 
 ###
-POST https://auth.knight.works/login
+POST https://auth.knight.works/api/v1/login
 content-type: application/json
 
 {

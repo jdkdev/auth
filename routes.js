@@ -2,10 +2,14 @@
 const { env } = require('./.front/env')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const bodyParser = require('body-parser')
 
 let { authenticateToken, findUser, authUser, generateAccessToken } = require('./functions')
 let express = require('express')
 let router = express.Router()
+
+router.use(bodyParser.urlencoded({ extended: false }))
+router.use(bodyParser.json())
 
 //TODO:move to DB
 let refreshTokens = []
