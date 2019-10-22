@@ -1,12 +1,29 @@
 {
-  "name": "kw-auth",
-  "version": "1.0.0",
+  "name": "auth",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "test": "node ace test",
+    "site:new": "node ./.front/forgery.js",
+    "site:build": "cp app/pages/index.html dist/",
+    "site:deploy": "node ./.front/deploy.js",
+    "site:deploy:stage": "node ./.front/deploy.js target=stage",
+    "site:deploy:prod": "node ./.front/deploy.js target=prod",
+    "site:deploy:rsync": "rsync command",
+    "transmit:app": "node ./.front/transmit.js item=app",
+    "transmit:app:stage": "node ./.front/transmit.js item=app from=home to=stage",
+    "sync:app": "node ./.front/sync.js item=app",
+    "sync:app:stage": "node ./.front/sync.js item=app from=home to=stage",
+    "frontier:begin": "ln --symbolic ./.front/outfitter.js frontier",
+    "frontier:leave": "rm ./frontier"
   },
-  "keywords": [],
+  "keywords": [
+    "frontier",
+    "javascript",
+    "nodejs"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
