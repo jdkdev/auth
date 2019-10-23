@@ -5,16 +5,27 @@ const bcrypt = require('bcrypt')
 const sqlite3 = require('sqlite3')
 let db = new sqlite3.Database(env.get('DB'))
 
+let accessToken = env.get('ACCESS_TOKEN_SECRET')
+
 function generateAccessToken(user) {
-  return jwt.sign({id: user.id, email: user.email}, env.get('ACCESS_TOKEN_SECRET'), { expiresIn: '10m' })
+  return jwt.sign({id: user.id, email: user.email}, accessToken, { expiresIn: '10m' })
 }
 
-function addUser({email, password}) {
-    db.serialize(function() {
-      var stmt = db.prepare("INSERT INTO users(email, password) VALUES (?, ?)")
-      stmt.run(email, password)
-    })
+// Middleware
+function authenticateTokenMiddleware(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, accessToken, (err, user) => {
+    if (err) return res.sendStatus(403)
+
+    req.user = user
+    console.log({ user })
+    next()
+  })
 }
+
 
 async function authUser(user, pw) {
   try {
@@ -23,10 +34,23 @@ async function authUser(user, pw) {
     } else {
       return 'Not Allowed'
     }
-  } catch {
-        return new Error
+  } catch (e) {
+        return ''
   }
 }
+
+/*
+async function addUser({email, password}) {
+    try {
+        db.serialize(function() {
+          var stmt = db.prepare("INSERT INTO users(email, password) VALUES (?, ?)")
+          stmt.run(email, password)
+        })
+    } catch {
+        return new Error
+    }
+}
+*/
 
 async function findUser(email) {
     var sql = 'SELECT * FROM users WHERE email = ?'
@@ -36,9 +60,11 @@ async function findUser(email) {
 
 async function getUsers(email) {
     var sql = 'SELECT id, email FROM users'
-    let response = await _all(sql)
+    let response = await _get(sql)
     return response
 }
+
+
 
 function _get(sql, params = []) {
     return new Promise((resolve, reject) => {
@@ -52,36 +78,10 @@ function _get(sql, params = []) {
         })
     })
 }
-function _all(sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db.get(sql, params, (err, result) => {
-            if (err) {
-                console.log('Error running sql: ' + sql)
-                reject(err)
-            } else {
-                resolve(result)
-            }
-        })
-    })
-}
-
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-  if (token == null) return res.sendStatus(401)
-
-  jwt.verify(token, env.get('ACCESS_TOKEN_SECRET'), (err, user) => {
-    if (err) return res.sendStatus(403)
-
-    req.user = user
-    console.log({ user })
-    next()
-  })
-}
 
 module.exports = {
     generateAccessToken,
-    authenticateToken,
+    authenticateTokenMiddleware,
     findUser,
     authUser,
 }

@@ -1,14 +1,28 @@
-###
-GET https://auth.knight.works/verify
+### vars
+@livehost = https://auth.knight.works/api/v1
+@port = {{$processEnv PORT}}
+@localhost = http://localhost:{{port}}/api/v1
+@contentType = application/json
+
+### verify
+GET {{livehost}}/verify
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGVtYWlsLmNvbSIsImlhdCI6MTU3MTc1MjQwNiwiZXhwIjoxNTcxNzUzMDA2fQ.16AN6x_LfeqjQmhkgT27rKNNjDVZi-6B19RiyYfeUwQ
+
 ###
+{{localhost}}/register
 
+###
+POST http://localhost:3131/api/v1/register
+content-type: {{contentType}}
 
-http://localhost:3131/register
-
+{
+    "email": "jordan+2@knight.works",
+    "password": "test",
+    "url": "cloud.knight.works"
+}
 ####
-POST http://localhost:3131/api/v1/login
-content-type: application/json
+POST {{localhost}}/login
+Content-type: {{contentType}}
 
 {
     "email": "test@email.com",
@@ -16,7 +30,7 @@ content-type: application/json
 }
 
 ###
-POST https://auth.knight.works/api/v1/login
+POST {{livehost}}/login
 content-type: application/json
 
 {

@@ -4,9 +4,11 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const bodyParser = require('body-parser')
 
-let { authenticateToken, findUser, authUser, generateAccessToken } = require('./functions')
+let { authenticateTokenMiddleware, findUser, authUser, generateAccessToken } = require('./functions')
+let User = require('./User')
 let express = require('express')
 let router = express.Router()
+let refreshToken = env.get('REFRESH_TOKEN_SECRET')
 
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
@@ -15,11 +17,12 @@ router.use(bodyParser.json())
 let refreshTokens = []
 
 router.post('/register', async (req, res) => {
+    console.log(req.body, req.url)
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        const user = { email: req.body.email, password: hashedPassword }
-        addUser(user)
-        res.status(201).send()
+        //TODO: change date.now to something else
+        let user = { email: req.body.email, password: req.body.password, date_added: Date.now(), url: req.body.url }
+        let newUser = await new User(user)
+        res.status(201).send(newUser)
     } catch (e) {
        console.log('error', e)
         res.status(500).send()
@@ -29,15 +32,17 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
-    let user = await findUser(email)
+    let user = await User.findByEmail(email)
 
     try {
-        if (await authUser(user, password)) {
+        if (await User.auth(user, password)) {
             let accessToken = generateAccessToken(user)
-            const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
+            const refreshToken = jwt.sign(user, refreshToken)
 
             refreshTokens.push(refreshToken)
             res.json({ accessToken: accessToken, refreshToken: refreshToken })
+        } else {
+            return res.json({message: 'Not allowed'})
         }
     } catch (e) {
         console.log(e)
@@ -50,14 +55,14 @@ router.post('/refresh', (req, res) => {
     if (refreshToken == null) return res.sendStatus(401)
     if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
 
-    jwt.verify(refreshToken, env.get('REFRESH_TOKEN_SECRET'), (err, user) => {
+    jwt.verify(refreshToken, refreshToken, (err, user) => {
         if (err) return res.sendStatus(403)
         const accessToken = generateAccessToken({ name: user.name })
         res.json({ accessToken: accessToken })
     })
 })
 
-router.get('/verify', authenticateToken, async (req, res) => {
+router.get('/verify', authenticateTokenMiddleware, async (req, res) => {
     res.json({message: 'Valid Token'})
 })
 
