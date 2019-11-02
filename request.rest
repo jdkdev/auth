@@ -1,31 +1,32 @@
 ### vars
 @livehost = https://auth.knight.works/api/v1
-@port = {{$processEnv PORT}}
+@port = 3131
 @localhost = http://localhost:{{port}}/api/v1
 @contentType = application/json
 
 ### verify
-GET {{livehost}}/verify
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGVtYWlsLmNvbSIsImlhdCI6MTU3MTc1MjQwNiwiZXhwIjoxNTcxNzUzMDA2fQ.16AN6x_LfeqjQmhkgT27rKNNjDVZi-6B19RiyYfeUwQ
+GET {{localhost}}/verify
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjksImVtYWlsIjoiam9yZGFuKzE0QGtuaWdodC53b3JrcyIsInNpdGUiOiJjbG91ZC5rbmlnaHQud29ya3MiLCJpYXQiOjE1NzI3MjI0NjgsImV4cCI6MTU3MjgwODg2OH0.WHKrboSuJrxjVUdMokc-7qQK6LuCNrq1SMgyY3yd7Mw
+
 
 ###
-{{localhost}}/register
+POST {{localhost}}/register
 
 ###
 POST http://localhost:3131/api/v1/register
 content-type: {{contentType}}
 
 {
-    "email": "jordan+2@knight.works",
+    "email": "jordan+16@knight.works",
     "password": "test",
-    "url": "cloud.knight.works"
+    "site": "cloud.knight.works"
 }
 ####
 POST {{localhost}}/login
-Content-type: {{contentType}}
+content-type: {{contentType}}
 
 {
-    "email": "test@email.com",
+    "email": "jordan+14@knight.works",
     "password": "test"
 }
 
@@ -37,3 +38,23 @@ content-type: application/json
     "email": "test@email.com",
     "password": "test"
 }
+
+###
+### Refresh
+POST {{localhost}}/refresh
+content-type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGVtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJiJDEwJEJJQVVLRmJCakk2dGxHQVFxVTNHNnViQUNLS2tTZWkyUGNxRlZESE1acmU2VEJtekUwOGpTIiwiaWF0IjoxNTcyNzIzMzM2fQ.H94OYXkcQKEsaYP4m549g47ch5VfJA_1v2RtU-_JsMs"
+}
+
+### Refresh
+POST {{localhost}}/logout
+content-type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGVtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJiJDEwJEJJQVVLRmJCakk2dGxHQVFxVTNHNnViQUNLS2tTZWkyUGNxRlZESE1acmU2VEJtekUwOGpTIiwiaWF0IjoxNTcyNzIzMzM2fQ.H94OYXkcQKEsaYP4m549g47ch5VfJA_1v2RtU-_JsMs"
+}
+
+
+###

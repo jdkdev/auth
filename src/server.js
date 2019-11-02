@@ -1,8 +1,8 @@
-const { env } = require('./.front/env')
+const { env } = require('frontier')
 
 let port = env.get('PORT') || 3131;
 let server = require('express')()
-let routes = require('./routes')
+let router = require('./router')
 
-server.use('/api/v1', routes)
+server.use('/api/v1', router)
 server.listen(port, () => console.log(`Auth Server listening on port ${port}!`))
