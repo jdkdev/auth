@@ -29,8 +29,9 @@
   "dependencies": {
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
-    "dotenv": "^8.1.0",
     "express": "^4.17.1",
+    "frontier": "github:jdkdev/frontier",
+    "helmet": "^3.21.2",
     "jsonwebtoken": "^8.5.1",
     "sqlite3": "^4.1.0"
   }
