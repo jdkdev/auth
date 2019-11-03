@@ -45,7 +45,7 @@ const AuthController = {
             if (await user.auth(password)) {
                 let {accessToken, refreshToken} = await user.login()
                 refreshTokens.push(refreshToken)
-                res.json({ accessToken: accessToken, refreshToken: refreshToken })
+                res.json({ accessToken, refreshToken, user})
             } else {
                 return res.json({message: 'Not allowed'})
             }
